@@ -1,0 +1,9 @@
+.env
+files/*
+keys/*
+*.pyc
+*.venv
+*.pytest_cache
+*.mypy_cache
+*.mypy_buckets
+*.pdf
