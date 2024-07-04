@@ -1,14 +1,11 @@
 #I want to print python version
 import sys
 print(sys.version)
-
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
+import os
+from dotenv import load_dotenv
 from services.models import FirebaseCache
 from services.integrations import FirebaseIntegration
-
-# Use a service account.
+load_dotenv()
 
 
 
@@ -36,3 +33,7 @@ def test_cache():
 def test_cache_invalid_key():
     cache = FirebaseCache()
     assert cache.get("invalid_key") is None
+
+def test_keys_loaded():
+    assert os.getenv("GEMINI_API_KEY") is not None
+    assert os.getenv("FIREBASE_SERVICE_ACCOUNT") is not None

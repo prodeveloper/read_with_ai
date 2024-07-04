@@ -74,4 +74,11 @@ We welcome contributions! Feel free to submit issues or pull requests on our Git
 
 ## License
 
-[Insert your chosen license here]
+##Expected in .env file
+
+```
+export GEMINI_API_KEY=your_api_key_here
+export FIREBASE_SERVICE_ACCOUNT=./keys/your_google_service_account.json
+```
+
+
