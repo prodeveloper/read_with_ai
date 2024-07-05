@@ -8,9 +8,6 @@ import streamlit as st
 import os
 from pdfconverse import PDFConverse
 from pdfconverse.models import FilePath, GeminiSetup
-from services.models import FirebaseCache
-from services.presentation import KeyDetails
-import logging
 from hashlib import md5
 from services.presentation import PresentationService, UploadedFile
 from dotenv import load_dotenv
@@ -22,7 +19,7 @@ def initialize_services(file_name):
     gemini_setup = GeminiSetup(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-1.5-flash")
     return PDFConverse(pdf_path=pdf_path, gemini_setup=gemini_setup)
 
-def handle_file_uploaded(uploaded_file,st_file):
+def handle_file_uploaded(uploaded_file,st_file,prompt):
     # Save the uploaded file to a temporary location
     file_name = PresentationService.generate_unique_file_name(uploaded_file)
     with open(file_name, "wb") as f:
@@ -31,17 +28,18 @@ def handle_file_uploaded(uploaded_file,st_file):
     pdfconverse = initialize_services(file_name)
     page_to_summarize = st.number_input("Enter the page to summarize:", value=1)
     first_page = last_page = page_to_summarize - 1
-    summary = PresentationService.get_summary(pdfconverse, first_page, last_page, uploaded_file)
+    summary = PresentationService.get_summary(pdfconverse, first_page, last_page, uploaded_file,prompt)
     st.write(summary)
 
 
-st.write("This app gives you summaries of PDFs")
+st.write("This app reads with you giving you summary of current page")
 # Allow user to upload a PDF file
 st_file = st.file_uploader("Choose a PDF file", type="pdf")
+prompt = st.text_input("Enter a prompt:", value="Explain this to me concisely maximum 5 bullet points as simply as possible")
 
 if st_file is not None:
     data = st_file.getvalue()
     uploaded_file = UploadedFile(name=st_file.name, type=st_file.type, size=st_file.size, data=data)
-    handle_file_uploaded(uploaded_file,st_file)
+    handle_file_uploaded(uploaded_file,st_file,prompt)
 else:
     st.write("Please upload a PDF file to proceed.")

@@ -15,5 +15,6 @@ def test_generate_unique_key():
 def test_generate_summary():
     mock_pdfconverse = MagicMock()
     mock_pdfconverse.page.return_value.prompt.return_value = "Mocked Summary"
+    prompt = "Help me put this as a mece list"
     uploaded_file = UploadedFile(name="test_file", type="pdf", size=100, data=b"test")
-    assert PresentationService.get_summary(mock_pdfconverse, 1, 10, uploaded_file) == "Mocked Summary"
+    assert PresentationService.get_summary(mock_pdfconverse, 1, 10, uploaded_file,prompt) == "Mocked Summary"
