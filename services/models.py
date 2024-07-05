@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class FirebaseCache(ICache):
     def __init__(self):
         self.cache = {}
-
+    
     def get(self, key: str):
         validated_key = CacheKey(key=key).key
         db = FirebaseIntegration.get_db()
