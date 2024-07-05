@@ -8,10 +8,11 @@ import streamlit as st
 import os
 from pdfconverse import PDFConverse
 from pdfconverse.models import FilePath, GeminiSetup
-from hashlib import md5
 from services.presentation import PresentationService, UploadedFile
+import logging
 from dotenv import load_dotenv
 load_dotenv()
+logging.basicConfig(level=logging.DEBUG)
 
 
 def initialize_services(file_name,gemini_key):

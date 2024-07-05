@@ -2,7 +2,7 @@ from hashlib import md5
 from pydantic import BaseModel, validator
 import logging
 from services.models import FirebaseCache
-logging.basicConfig(level=logging.DEBUG)
+
 
 class UploadedFile(BaseModel):
     name: str
@@ -28,10 +28,15 @@ class PresentationService:
     def generate_unique_file_name(uploaded_file: UploadedFile):
         file_md5 = md5(uploaded_file.data).hexdigest()
         return f"{uploaded_file.name}{file_md5}.pdf"
+    """
+    Generates a unique key for the summary
+    This is per page basis and will NOT change if you change the prompt
+    """
     @staticmethod
     def generate_unique_key(key_details: KeyDetails):
         file_md5 = md5(key_details.uploaded_file.data).hexdigest()
         return f"summary_{key_details.page_start}_{key_details.page_end}_{key_details.uploaded_file.name}_{file_md5}"
+   
     @staticmethod
     def get_summary(pdfconverse, page_start:int, page_end:int, uploaded_file: UploadedFile,prompt:str):
         key_details = KeyDetails(page_start=page_start, page_end=page_end, uploaded_file=uploaded_file)
