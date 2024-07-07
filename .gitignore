@@ -7,3 +7,5 @@ keys/*
 *.mypy_cache
 *.mypy_buckets
 *.pdf
+DS_Store
+.DS_Store  

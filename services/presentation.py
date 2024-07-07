@@ -6,8 +6,6 @@ from services.models import FirebaseCache
 
 class UploadedFile(BaseModel):
     name: str
-    type: str
-    size: int
     data: bytes
 
 class KeyDetails(BaseModel):

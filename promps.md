@@ -1,0 +1,1 @@
+1. Write a short speech based on this content using the PREP (Point, Reason, Example) framework. The example should be interesting and showcase the point clearly. The example is the meat of the work where possible use actual names ie content I can independently verify
