@@ -3,6 +3,8 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from dotenv import load_dotenv
+from pdfconverse.models import FilePath, GeminiSetup
+from pdfconverse import PDFConverse
 
 load_dotenv()
 
@@ -26,3 +28,14 @@ class FirebaseIntegration:
         return self.db.collection(collection_name)
     def get_document(self, collection_name: str, document_id: str):
         return self.db.collection(collection_name).document(document_id)
+    
+class PdfConverseIntegration:
+    @staticmethod
+    def initialize_services_by_file_path(file_name,gemini_key):
+        file_path = FilePath(path=file_name)
+        gemini_setup = GeminiSetup(api_key=gemini_key, model="gemini-1.5-flash")
+        return PDFConverse(gemini_setup=gemini_setup, file_path=file_path)
+    @staticmethod
+    def initialize_services_by_bytes(file_bytes,gemini_key):
+        gemini_setup = GeminiSetup(api_key=gemini_key, model="gemini-1.5-flash")
+        return PDFConverse(gemini_setup=gemini_setup, bytes=file_bytes)

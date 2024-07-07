@@ -6,27 +6,18 @@ As a user, I want to specify a range of pages from the uploaded PDF that I'm int
 """
 import streamlit as st
 import os
-from pdfconverse import PDFConverse
-from pdfconverse.models import FilePath, GeminiSetup
 from services.presentation import PresentationService, UploadedFile
+from services.integrations import PdfConverseIntegration
 import logging
 from dotenv import load_dotenv
 load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 
 
-def initialize_services(file_name,gemini_key):
-    pdf_path = FilePath(path=file_name)
-    gemini_setup = GeminiSetup(api_key=gemini_key, model="gemini-1.5-flash")
-    return PDFConverse(pdf_path=pdf_path, gemini_setup=gemini_setup)
 
 def handle_file_uploaded(uploaded_file,st_file,prompt,gemini_key):
-    # Save the uploaded file to a temporary location
-    file_name = PresentationService.generate_unique_file_name(uploaded_file)
-    with open(file_name, "wb") as f:
-        f.write(st_file.getbuffer())
-    # Initialize PDFConverse
-    pdfconverse = initialize_services(file_name,gemini_key)
+    file_bytes = st_file.getbuffer()
+    pdfconverse = PdfConverseIntegration.initialize_services_by_bytes(file_bytes,gemini_key)
     page_to_summarize = st.number_input("Enter the page to summarize:", value=1)
     first_page = last_page = page_to_summarize - 1
     summary = PresentationService.get_summary(pdfconverse, first_page, last_page, uploaded_file,prompt)
