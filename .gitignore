@@ -9,3 +9,4 @@ keys/*
 *.pdf
 DS_Store
 .DS_Store  
+config.ini
