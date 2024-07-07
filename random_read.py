@@ -17,8 +17,9 @@ def gen_book_of_day():
 
 def gen_setup_intro():
     st.write("This app gives a random quick summary from the books I am currently reading")
-    entered_password = st.text_input("Enter a password:", type="password")
-    password_verified = entered_password == os.getenv("PASSWORD")
+    query_params = st.query_params
+    entered_password = query_params.get("password", "")
+    password_verified = True if entered_password == os.getenv("PASSWORD") else False
     return  password_verified
 def display_summary():
     prompt = st.text_input("Enter a prompt:", value="Explain this to me concisely maximum 5 bullet points as simply as possible")
