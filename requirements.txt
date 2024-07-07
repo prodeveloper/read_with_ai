@@ -1,6 +1,6 @@
 pydantic==2.7.4
 load-dotenv
-streamlit==1.17.0
+streamlit==1.36.0
 pdfconverse==0.1.3
 google-cloud-firestore==2.10.0
 altair==4.1.0
