@@ -1,12 +1,35 @@
 from hashlib import md5
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, ConfigDict
 import logging
 from services.models import FirebaseCache
+from io import BytesIO
+from typing import Annotated
+import base64
 
+"""
+This is a validator for the BytesIO type.
+It will convert the BytesIO to a base64 encoded string if it is not already a string.
+"""
+def bytesio_validator(v):
+    if isinstance(v, BytesIO):
+        return v
+    if isinstance(v, (str, bytes)):
+        return BytesIO(base64.b64decode(v) if isinstance(v, str) else v)
+    raise ValueError('Invalid type for BytesIO')
+BytesIOAnnotated = Annotated[BytesIO, bytesio_validator]
 
 class UploadedFile(BaseModel):
     name: str
-    data: bytes
+    data: BytesIOAnnotated
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    def model_dump(self, *args, **kwargs):
+        d = super().model_dump(*args, **kwargs)
+        if isinstance(d['data'], BytesIO):
+            d['data'] = base64.b64encode(d['data'].getvalue()).decode('utf-8')
+        return d
+
+
 
 class KeyDetails(BaseModel):
     page_start: int
@@ -24,16 +47,14 @@ class KeyDetails(BaseModel):
 class PresentationService:
     @staticmethod
     def generate_unique_file_name(uploaded_file: UploadedFile):
-        file_md5 = md5(uploaded_file.data).hexdigest()
-        return f"{uploaded_file.name}{file_md5}.pdf"
+        return f"{uploaded_file.name}"
     """
     Generates a unique key for the summary
     This is per page basis and will NOT change if you change the prompt
     """
     @staticmethod
     def generate_unique_key(key_details: KeyDetails):
-        file_md5 = md5(key_details.uploaded_file.data).hexdigest()
-        return f"summary_{key_details.page_start}_{key_details.page_end}_{key_details.uploaded_file.name}_{file_md5}"
+        return f"summary_{key_details.page_start}_{key_details.page_end}_{key_details.uploaded_file.name}"
    
     @staticmethod
     def get_summary(pdfconverse, page_start:int, page_end:int, uploaded_file: UploadedFile,prompt:str):

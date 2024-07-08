@@ -1,7 +1,7 @@
 from services.books_to_master import files_list
 import streamlit as st
 import random
-from services.integrations import PdfConverseIntegration
+from services.integrations import PdfConverseIntegration, BlobStorageIntegration
 from services.presentation import PresentationService, UploadedFile
 from config import ConfigLoader
 
@@ -18,10 +18,9 @@ def main():
 def gen_book_of_day():        
     file = random.choice(files_list)
     first_page = last_page = random.randint(file.page_start, file.page_end)
-    file_name = "files/"+file.name
     stream = file.stream
-    with open(file_name, "rb") as f:
-        file_data = f.read()
+    file_name=file.name
+    file_data = BlobStorageIntegration().file_stream_from_blob_storage(file.name, "books-to-master")
     uploaded_file = UploadedFile(name=file.name,data=file_data)
     return file_name, stream,first_page, last_page, uploaded_file
 
@@ -31,7 +30,7 @@ def gen_setup_intro(query_params):
     return  password_verified
 def gen_summary(prompt):
     file_name, stream, first_page, last_page, uploaded_file = gen_book_of_day()
-    pdfconverse = PdfConverseIntegration.initialize_services_by_file_path(file_name,ConfigLoader().configs.GEMINI_API_KEY)
+    pdfconverse = PdfConverseIntegration.initialize_services_by_bytes(uploaded_file.data,ConfigLoader().configs.GEMINI_API_KEY)
     summary = PresentationService.get_summary(pdfconverse, first_page, last_page, uploaded_file,prompt)
     return summary, stream, file_name, first_page
 

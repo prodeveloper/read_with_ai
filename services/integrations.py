@@ -31,6 +31,10 @@ class FirebaseIntegration:
         return self.db.collection(collection_name).document(document_id)
     
 class PdfConverseIntegration:
+    """
+    This class is used to initialize the PDFConverse services by file path or bytes.
+    The only difference in file path is it first checks the file actually exists.
+    """
     @staticmethod
     def initialize_services_by_file_path(file_name,gemini_key):
         file_path = FilePath(path=file_name)
