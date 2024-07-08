@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from pdfconverse.models import FilePath, GeminiSetup
 from pdfconverse import PDFConverse
 from config import ConfigLoader
+from google.cloud import storage
+from io import BytesIO
 
 class FirebaseIntegration:
     def __init__(self):
@@ -38,3 +40,19 @@ class PdfConverseIntegration:
     def initialize_services_by_bytes(file_bytes,gemini_key):
         gemini_setup = GeminiSetup(api_key=gemini_key, model="gemini-1.5-flash")
         return PDFConverse(gemini_setup=gemini_setup, bytes=file_bytes)
+    
+class BlobStorageIntegration:
+    def __init__(self):
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ConfigLoader().configs.GOOGLE_APPLICATION_CREDENTIALS
+        self.storage_client = storage.Client()
+    def upload_file_to_blob_storage(self, file_path, bucket_name):
+        bucket = self.storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_path)
+        blob.upload_from_file(file_path)
+
+    def file_stream_from_blob_storage(self, file_path, bucket_name):
+        bucket = self.storage_client.bucket(bucket_name)
+        blob = bucket.blob(file_path)
+        file_stream = BytesIO()
+        blob.download_to_file(file_stream)
+        return file_stream
