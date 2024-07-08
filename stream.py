@@ -10,6 +10,7 @@ from services.presentation import PresentationService, UploadedFile
 from services.integrations import PdfConverseIntegration
 import logging
 from dotenv import load_dotenv
+from config import ConfigLoader
 load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 
@@ -31,7 +32,7 @@ st.write("This app reads with you giving you summary of current page")
 # Allow user to upload a PDF file
 st_file = st.file_uploader("Choose a PDF file", type="pdf")
 prompt = st.text_input("Enter a prompt:", value="Explain this to me concisely maximum 5 bullet points as simply as possible")
-gemini_key =os.getenv("GEMINI_API_KEY")
+gemini_key = ConfigLoader().configs.GEMINI_API_KEY
 if st_file is not None:
     data = st_file.getvalue()
     uploaded_file = UploadedFile(name=st_file.name, data=data)
