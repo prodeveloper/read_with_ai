@@ -35,5 +35,4 @@ def gen_summary(prompt):
     return summary, stream, file_name, first_page
 
 
-main()
 

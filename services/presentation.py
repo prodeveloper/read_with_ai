@@ -20,7 +20,7 @@ BytesIOAnnotated = Annotated[BytesIO, bytesio_validator]
 
 class UploadedFile(BaseModel):
     name: str
-    data: BytesIOAnnotated
+    data: BytesIOAnnotated | bytes
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def model_dump(self, *args, **kwargs):

@@ -1,5 +1,5 @@
 
-from random_read import gen_setup_intro, gen_book_of_day
+from controllers.random_read import gen_setup_intro, gen_book_of_day
 
 def test_gen_setup_intro():
     query_params = {'password': 'wrong_password'}
