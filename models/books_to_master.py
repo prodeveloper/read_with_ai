@@ -1,4 +1,8 @@
 from collections import namedtuple
+import random
+from services.integrations import BlobStorageIntegration
+from services.presentation import UploadedFile
+from models.random_read_data import TodayBook
 
 
 File = namedtuple("File", ["name", "stream","page_start","page_end"])
@@ -29,3 +33,13 @@ files_list =[
     ),
 
 ]
+
+def gen_book_of_day():        
+    file = random.choice(files_list)
+    first_page = last_page = random.randint(file.page_start, file.page_end)
+    stream = file.stream
+    file_name=file.name
+    file_data = BlobStorageIntegration().file_stream_from_blob_storage(file.name, "books-to-master")
+    uploaded_file = UploadedFile(name=file.name,data=file_data)
+    today_book = TodayBook(file_name, stream, first_page, last_page, uploaded_file)
+    return today_book

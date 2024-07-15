@@ -1,7 +1,7 @@
 from hashlib import md5
 from pydantic import BaseModel, validator, ConfigDict
 import logging
-from services.models import FirebaseCache
+from models.local_firebase import FirebaseCache
 from io import BytesIO
 from typing import Annotated
 import base64

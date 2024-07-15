@@ -1,13 +1,13 @@
 #I want to print python version
 import sys
 
-from services.models import FirebaseCache
+from models.local_firebase import FirebaseCache
 from services.integrations import FirebaseIntegration, PdfConverseIntegration
 import configparser
 import os
+from config import ConfigLoader
 
-config = configparser.ConfigParser()
-config.read('./config.ini')
+
 
 
 
@@ -37,17 +37,20 @@ def test_cache_invalid_key():
     assert cache.get("invalid_key") is None
 
 def test_keys_loaded():
-    assert config.get("GEMINI", "GEMINI_API_KEY") is not None
-    assert config.get("GEMINI", "FIREBASE_SERVICE_ACCOUNT") is not None
+    assert ConfigLoader().configs.GEMINI_API_KEY is not None
+    assert ConfigLoader().configs.FIREBASE_SERVICE_ACCOUNT is not None
+    assert ConfigLoader().configs.LOCAL_PASSWORD is not None
+    assert ConfigLoader().configs.GOOGLE_APPLICATION_CREDENTIALS is not None
 
 def test_pdf_converse_integration():
     pdf_path = os.path.abspath("./files/sample.pdf")
-    pdf_converse = PdfConverseIntegration.initialize_services_by_file_path(pdf_path, config.get("GEMINI", "GEMINI_API_KEY"))
+    pdf_converse = PdfConverseIntegration.initialize_services_by_file_path(pdf_path, ConfigLoader().configs.GEMINI_API_KEY)
     assert pdf_converse is not None
+
 def test_pdf_converse_integration_by_bytes():
     pdf_path = os.path.abspath("./files/sample.pdf")
     with open(pdf_path, "rb") as file:
         pdf_bytes = file.read()
-    pdf_converse = PdfConverseIntegration.initialize_services_by_bytes(pdf_bytes, config.get("GEMINI", "GEMINI_API_KEY"))
+    pdf_converse = PdfConverseIntegration.initialize_services_by_bytes(pdf_bytes, ConfigLoader().configs.GEMINI_API_KEY)
     assert pdf_converse is not None
 

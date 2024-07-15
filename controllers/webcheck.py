@@ -12,13 +12,22 @@ def pdf_converse_works():
         cloud_storage_test.test_pdf_converse_integration()
         return True
     except Exception as e:
-        
+        st.write("PDF Converse failed with message",e)
         return False
 def pdf_converse_works_by_bytes():
     try:
         cloud_storage_test.test_pdf_converse_integration_by_bytes()
         return True
     except Exception as e:
+        st.write("PDF Converse failed with message",e)
+        return False
+    
+def can_read_credentials():
+    try:
+        cloud_storage_test.test_keys_loaded()
+        return True
+    except Exception as e:
+        st.write("Credentials failed with message",e)
         return False
 def main():
     st.write("Checking if the services work")
@@ -28,6 +37,8 @@ def main():
         st.write("2. PDF Converse works")
     if pdf_converse_works_by_bytes():
         st.write("3. PDF Converse works by bytes")
+    if can_read_credentials():
+        st.write("4. Credentials are loaded")
     
 
     

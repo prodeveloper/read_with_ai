@@ -8,6 +8,7 @@ from pdfconverse import PDFConverse
 from config import ConfigLoader
 from google.cloud import storage
 from io import BytesIO
+import json
 
 class FirebaseIntegration:
     def __init__(self):
@@ -47,7 +48,8 @@ class PdfConverseIntegration:
     
 class BlobStorageIntegration:
     def __init__(self):
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ConfigLoader().configs.GOOGLE_APPLICATION_CREDENTIALS
+        if ConfigLoader().configs.GOOGLE_APPLICATION_CREDENTIALS:
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ConfigLoader().configs.GOOGLE_APPLICATION_CREDENTIALS
         self.storage_client = storage.Client()
     def upload_file_to_blob_storage(self, file_path, bucket_name):
         bucket = self.storage_client.bucket(bucket_name)

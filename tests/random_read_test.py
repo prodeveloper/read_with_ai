@@ -1,5 +1,6 @@
 
-from controllers.random_read import gen_setup_intro, gen_book_of_day
+from controllers.random_read import gen_setup_intro,get_text
+from models.books_to_master import gen_book_of_day
 
 def test_gen_setup_intro():
     query_params = {'password': 'wrong_password'}
@@ -16,4 +17,8 @@ def test_gen_book_of_day():
     assert last_page > 0
     assert first_page == last_page
     assert uploaded_file is not None
-    
+
+def test_get_text():
+    today_book = gen_book_of_day()
+    text = get_text(today_book)
+    assert text is not None
