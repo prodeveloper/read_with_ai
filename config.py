@@ -22,3 +22,8 @@ class ConfigLoader:
 
 
         return Config(GEMINI_API_KEY, FIREBASE_SERVICE_ACCOUNT, LOCAL_PASSWORD, GOOGLE_APPLICATION_CREDENTIALS)
+    
+    def get_prompt(self):
+        default_prompt = "Explain this to me maximum 5 bullet points as simply as possible. Use metaphors and analogies to explain the concepts."
+        prompt = os.environ.get('prompt') if os.environ.get('prompt') else default_prompt
+        return prompt
