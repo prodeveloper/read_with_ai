@@ -9,10 +9,9 @@ from pypdf import PdfReader
 
 
 def main():
-    st.write("This app gives a random quick summary from the books I am currently reading")
     password_verified = gen_setup_intro(query_params=st.query_params)
     if password_verified:
-        prompt = st.text_input("Enter a prompt:", value="Explain this to me concisely maximum 5 bullet points as simply as possible")
+        prompt = "Explain this to me concisely maximum 5 bullet points as simply as possible. Use metaphors and analogies to explain the concepts."
         summary,today_book = gen_summary(prompt,gen_book_of_day)
         st.write(f"Today stream {today_book.stream} and book is {today_book.file_name} page {today_book.first_page}")
         st.write(summary)
