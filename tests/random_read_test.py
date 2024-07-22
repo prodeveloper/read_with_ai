@@ -1,6 +1,7 @@
 
-from controllers.random_read import gen_setup_intro,get_text
+from controllers.random_read import gen_setup_intro
 from models.books_to_master import gen_book_of_day
+from commands.reader import RandomReadCmd
 
 def test_gen_setup_intro():
     query_params = {'password': 'wrong_password'}
@@ -20,5 +21,7 @@ def test_gen_book_of_day():
 
 def test_get_text():
     today_book = gen_book_of_day()
-    text = get_text(today_book)
-    assert text is not None
+    readcmd = RandomReadCmd()
+    readcmd.today_book = today_book
+    readcmd.get_text()
+    assert readcmd.full_text is not None
