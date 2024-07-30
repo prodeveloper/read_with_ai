@@ -24,6 +24,21 @@ class ConfigLoader:
         return Config(GEMINI_API_KEY, FIREBASE_SERVICE_ACCOUNT, LOCAL_PASSWORD, GOOGLE_APPLICATION_CREDENTIALS)
     
     def get_prompt(self):
-        default_prompt = "Explain this to me maximum 5 bullet points as simply as possible. Use metaphors and analogies to explain the concepts."
+        default_prompt = """
+Use the context from this page of the book to teach me. I want to use the preq framework
+
+Point: the main idea
+Reason: why this makes sense
+Example: make this one as visual as possible. Use analogies and so on
+Question: leave me with something to think about
+
+
+Feel free to use as many preqs as possible to illustrate the point.
+
+The page will normally only have a sub point of  the main content. Use it as a guide but explain the full context.
+
+Take the perspective I am preparing for an interview in system design and coding so where possible add this context 
+
+"""
         prompt = os.environ.get('prompt') if os.environ.get('prompt') else default_prompt
         return prompt
