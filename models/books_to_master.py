@@ -43,8 +43,8 @@ custom_files_list = [
     ),
 ]
 
-def gen_book_of_day():        
-    file = random.choice(files_list)
+def gen_book_of_day(stream=None):        
+    file = get_file(stream)
     first_page = last_page = random.randint(file.page_start, file.page_end)
     stream = file.stream
     file_name=file.name
@@ -53,18 +53,15 @@ def gen_book_of_day():
     today_book = TodayBook(file_name, stream, first_page, last_page, uploaded_file)
     return today_book
 
-def gen_custom_book_of_day(stream):
-    files = [file for file in custom_files_list if file.stream == stream]
-    if not files:
-        raise BookStreamNotFound(f"No files found for stream: {stream}")
-    file = random.choice(files)
-    first_page = last_page = random.randint(file.page_start, file.page_end)
-    stream = file.stream
-    file_name=file.name
-    file_data = BlobStorageIntegration().file_stream_from_blob_storage(file.name, "books-to-master")
-    uploaded_file = UploadedFile(name=file.name,data=file_data)
-    today_book = TodayBook(file_name, stream, first_page, last_page, uploaded_file)
-    return today_book
+def get_file(stream=None):
+    if stream:
+        files = [file for file in custom_files_list if file.stream == stream]
+        if not files:
+            raise BookStreamNotFound(f"No files found for stream: {stream}")
+    else:
+        files = files_list
+    return random.choice(files)
+
 
 class BookStreamNotFound(Exception):
     """Raised when a book stream is not found"""
