@@ -1,4 +1,4 @@
-from models.books_to_master import gen_book_of_day
+from models.books_to_master import gen_book_of_day, gen_custom_book_of_day
 from services.integrations import PdfConverseIntegration
 from services.presentation import PresentationService, UploadedFile
 from config import ConfigLoader
@@ -11,11 +11,16 @@ class RandomReadCmd:
     prompt = None
     full_text = None
     run_state= None
-    def __init__(self):
+    stream=None
+    def __init__(self,stream:str=None):
+        self.stream = stream
         self.run_state = False
 
     async def run(self):
-        self.today_book = gen_book_of_day()
+        if self.stream:
+            self.today_book = gen_custom_book_of_day(self.stream)
+        else:
+            self.today_book = gen_book_of_day()
         self.prompt = ConfigLoader().get_prompt()
         await self.gen_summary()
         self.get_text()
