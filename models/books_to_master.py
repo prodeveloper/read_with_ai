@@ -41,6 +41,12 @@ custom_files_list = [
         page_start=13,
         page_end=126
     ),
+    File(
+        name="essentials_online_payments_security.pdf",
+        stream="jp_morgan",
+        page_start=1,
+        page_end=126
+    ),
 ]
 
 def gen_book_of_day(stream=None):        
