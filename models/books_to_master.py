@@ -47,6 +47,24 @@ custom_files_list = [
         page_start=1,
         page_end=126
     ),
+    File(
+        name="developer_study_guide_java_17.pdf",
+        stream="coding",
+        page_start=70,
+        page_end=959
+    ),
+    File(
+        name="elements_programming_java.pdf",
+        stream="coding",
+        page_start=25,
+        page_end=500
+    ),
+    File(
+        name="cracking_coding_interview.pdf", 
+        stream="coding", 
+        page_start=35, 
+        page_end=662
+    ),
 ]
 
 def gen_book_of_day(stream=None):        
