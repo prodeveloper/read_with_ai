@@ -65,6 +65,12 @@ custom_files_list = [
         page_start=35, 
         page_end=662
     ),
+    File(
+        name="introduction_algorithms.pdf", 
+        stream="coding", 
+        page_start=39, 
+        page_end=1200
+    ),
 ]
 
 def gen_book_of_day(stream=None):        
