@@ -3,9 +3,11 @@ import sys
 
 from models.local_firebase import FirebaseCache
 from services.integrations import FirebaseIntegration, PdfConverseIntegration
-import configparser
 import os
 from config import ConfigLoader
+import psycopg2
+from psycopg2.extras import DictCursor
+from models.books_to_master import get_db_connection
 
 
 
@@ -53,4 +55,15 @@ def test_pdf_converse_integration_by_bytes():
         pdf_bytes = file.read()
     pdf_converse = PdfConverseIntegration.initialize_services_by_bytes(pdf_bytes, ConfigLoader().configs.GEMINI_API_KEY)
     assert pdf_converse is not None
+
+def test_db_connection():
+    config = ConfigLoader()
+    assert config.database_config.DB_HOST is not None
+    conn = get_db_connection()
+    assert conn is not None
+    with conn.cursor() as cur:
+        cur.execute("SELECT 1")
+        result = cur.fetchone()
+        assert result[0] == 1
+    conn.close()
 

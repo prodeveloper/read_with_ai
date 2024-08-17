@@ -3,7 +3,9 @@ import random
 from services.integrations import BlobStorageIntegration
 from services.presentation import UploadedFile
 from models.random_read_data import TodayBook
-
+import psycopg2
+from psycopg2.extras import DictCursor
+from config import ConfigLoader
 
 File = namedtuple("File", ["name", "stream","page_start","page_end"])
 files_list =[
@@ -34,45 +36,6 @@ files_list =[
 
 ]
 
-custom_files_list = [
-    File(
-        name="mobile_payments.pdf",
-        stream="jp_morgan",
-        page_start=13,
-        page_end=126
-    ),
-    File(
-        name="essentials_online_payments_security.pdf",
-        stream="jp_morgan",
-        page_start=1,
-        page_end=126
-    ),
-    File(
-        name="developer_study_guide_java_17.pdf",
-        stream="coding",
-        page_start=70,
-        page_end=959
-    ),
-    File(
-        name="elements_programming_java.pdf",
-        stream="coding",
-        page_start=25,
-        page_end=500
-    ),
-    File(
-        name="cracking_coding_interview.pdf", 
-        stream="coding", 
-        page_start=35, 
-        page_end=662
-    ),
-    File(
-        name="introduction_algorithms.pdf", 
-        stream="coding", 
-        page_start=39, 
-        page_end=1200
-    ),
-]
-
 def gen_book_of_day(stream=None):        
     file = get_file(stream)
     first_page = last_page = random.randint(file.page_start, file.page_end)
@@ -84,13 +47,33 @@ def gen_book_of_day(stream=None):
     return today_book
 
 def get_file(stream=None):
-    if stream:
-        files = [file for file in custom_files_list if file.stream == stream]
-        if not files:
-            raise BookStreamNotFound(f"No files found for stream: {stream}")
-    else:
-        files = files_list
-    return random.choice(files)
+    """
+    Get a file from the database
+    """
+    with get_db_connection() as conn:
+        with conn.cursor(cursor_factory=DictCursor) as cur:
+            if stream:
+                cur.execute("SELECT * FROM books_to_master WHERE stream = %s", (stream,))
+            else:
+                cur.execute("SELECT * FROM books_to_master")
+            files = cur.fetchall()
+            if not files:
+                if stream:
+                    raise BookStreamNotFound(f"No files found for stream: {stream}")
+                else:
+                    raise BookStreamNotFound("No files found in the database")
+            file = random.choice(files)
+            return File(name=file['name'], stream=file['stream'], page_start=file['page_start'], page_end=file['page_end'])
+
+def get_db_connection():
+    config = ConfigLoader()
+    return psycopg2.connect(
+        dbname=config.database_config.DB_NAME,
+        user=config.database_config.DB_USER,
+        password=config.database_config.DB_PASSWORD,
+        host=config.database_config.DB_HOST,
+        port=config.database_config.DB_PORT
+    )
 
 
 class BookStreamNotFound(Exception):

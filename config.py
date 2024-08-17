@@ -4,6 +4,18 @@ from collections import namedtuple
 import json
 
 class ConfigLoader:
+    """Loads and manages configuration settings for the application."""
+    config = configparser.ConfigParser()
+    database_config = namedtuple('DatabaseConfig', [
+            'DB_HOST', 
+            'DB_NAME', 
+            'DB_USER', 
+            'DB_PASSWORD',
+            'DB_PORT'
+        ])
+    def __init__(self):
+        self._get_configs()
+        self._db_configs()
     @property
     def configs(self):
         config = configparser.ConfigParser()
@@ -42,3 +54,25 @@ Take the perspective I am preparing for an interview in system design and coding
 """
         prompt = os.environ.get('prompt') if os.environ.get('prompt') else default_prompt
         return prompt
+    def _get_configs(self,*,config_string:str=None):
+        if config_string:
+            self.config.read_string(config_string)
+        else:
+            online_config = os.environ.get('read_with_ai_configs')
+            if online_config:
+                self.config.read_string(online_config)
+            else:
+                self.config.read('config.ini')
+
+    def _load_config(self, config_type, section, convert_to_int=False):
+        for field in config_type._fields:
+            value = os.environ.get(field) or self.config.get(section, field, fallback=None)
+            if convert_to_int and value is not None:
+                try:
+                    value = int(value)
+                except ValueError:
+                    value = 0
+            setattr(config_type, field, value)
+
+    def _db_configs(self):
+        self._load_config(self.database_config, 'DATABASE')
